@@ -1,4 +1,16 @@
 const mongoose = require("mongoose");
+const OrderSchema = require("./Order");
+
+const favourite = mongoose.Schema({
+    itemId: {
+        type: String,
+        required: true
+    },
+    rating: {
+        type: Number,
+        required: true
+    }
+});
 
 const userSchema = mongoose.Schema({
     name: {
@@ -19,7 +31,19 @@ const userSchema = mongoose.Schema({
     type: {
         type: String,
         default: "C"
+    },
+    favourites: {
+        type: [favourite],
+        default: []
+    },
+    currentOrder: {
+        type: OrderSchema
+    },
+    orderHistory: {
+        type: [OrderSchema],
+        default: []
     }
+
 });
 
 module.exports = mongoose.model("User", userSchema);

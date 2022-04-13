@@ -19,7 +19,7 @@ Router.post('/register', async (req, res) => {
         name: rb.name,
         email: rb.email,
         password: hashPassword,
-        type: "C"
+        type: "C",
     });
 
     try {

@@ -11,12 +11,12 @@ const rating = mongoose.Schema({
     }
 });
 
-const ItemSchema = mongoose.Schema({
-    title: {
+const StaffSchema = mongoose.Schema({
+    userId: {
       type: String,
       required: true  
     },
-    description: {
+    hours: {
         type: String,
         required: true  
     },
@@ -24,10 +24,14 @@ const ItemSchema = mongoose.Schema({
         type: String,
         required: true
     },
+    orders: {
+        type: [String],
+        default: []
+    },
     ratings: {
         type: [rating],
         default: []
     }
 });
 
-module.exports = mongoose.model("Item", ItemSchema);
+module.exports = mongoose.model("Staff", StaffSchema);

@@ -27,6 +27,11 @@ const OrderSchema = mongoose.Schema({
         default: 5,
         required: true
     },
+    isComplete: {
+        type: Boolean,
+        default: false,
+        required: true
+    },
     couponCode: {
         type: String
     },

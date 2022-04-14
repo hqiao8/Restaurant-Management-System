@@ -43,8 +43,16 @@ Router.post("/rateItem", async (req, res) => {
         rating: rating
     };
     const item = await Item.findById(req.body.itemId);
-    
+    item.ratings.push(itemRating);
+    const cust = await User.findById(req.body.itemId);
+    cust.favourites.push(custRating);
+
+    await cust.save();
+    await item.save();
+
 });
+
+
 
 
 

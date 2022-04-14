@@ -2,11 +2,11 @@ const mongoose = require("mongoose");
 const OrderSchema = require("./Order");
 
 const couponSchema = mongoose.Schema({
-    couponCode: {
+    code: {
         type: String,
         required: true
     },
-    couponDiscount: {
+    discount: {
         type: Number,
         required: true
     },

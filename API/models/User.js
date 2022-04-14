@@ -18,6 +18,16 @@ const userSchema = mongoose.Schema({
         required: true,
         min: 6
     },
+    fName: {
+        type: String,
+        required: true,
+        min: 6
+    },
+    lName: {
+        type: String,
+        required: true,
+        min: 6
+    },
     email: {
         type: String,
         required: true,

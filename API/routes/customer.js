@@ -2,6 +2,7 @@ const Router = require("express").Router();
 const jwt = require("jsonwebtoken");
 const Item = require("../models/Item");
 const User = require("../models/User");
+const Staff = require("../models/Staff");
 
 // Verifies if the user's token is real and retrieves that user.
 Router.use( async (req, res, next) => {
@@ -16,6 +17,11 @@ Router.use( async (req, res, next) => {
     } catch (err) {
         res.status(400).send("Invalid Token");
     }
+});
+
+//Retrieves the current user's info
+Router.get("/", (req, res) => {
+    res.json(req.user);
 });
 
 Router.get("/retrieveFavourites", async (req, res) => {
@@ -50,6 +56,20 @@ Router.post("/rateItem", async (req, res) => {
     await cust.save();
     await item.save();
 
+});
+
+Router.post("/rateStaff", async (req, res) => {
+    const staff = await Staff.findOne({orders: {$elemMatch: {orderId: req.body.orderId}}});
+    const r = req.body.rating;
+    // Constrains rating between 0 and 5
+    r = (r < 0) ? 0 : (r > 5) ? 5 : r;
+
+    const rating = {
+        userId: req.user._id,
+        rating: r
+    }
+    staff.ratings.push(rating);
+    await staff.save();
 });
 
 

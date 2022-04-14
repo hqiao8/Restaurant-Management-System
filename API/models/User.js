@@ -47,7 +47,19 @@ const userSchema = mongoose.Schema({
         default: []
     },
     currentOrder: {
-        type: OrderSchema
+        type: OrderSchema,
+        default: {
+            items: [],
+            total: 0,
+            itemTotal: 0,
+            isDelivery: false,
+            address: "",
+            deliveryFees: 0,
+            isComplete: false,
+            time: 0,
+            couponCode: "",
+            couponDiscount: 0
+        }
     },
     orderHistory: {
         type: [OrderSchema],

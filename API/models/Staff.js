@@ -11,6 +11,17 @@ const rating = mongoose.Schema({
     }
 });
 
+const order = mongoose.Schema({
+    userId: {
+        type: String,
+        required: true
+    },
+    orderId: {
+        type: String,
+        required: true
+    }
+});
+
 const StaffSchema = mongoose.Schema({
     userId: {
       type: String,
@@ -18,14 +29,10 @@ const StaffSchema = mongoose.Schema({
     },
     hours: {
         type: String,
-        required: true  
-    },
-    type: {
-        type: String,
-        required: true
+        default: ""  
     },
     orders: {
-        type: [String],
+        type: [order],
         default: []
     },
     ratings: {

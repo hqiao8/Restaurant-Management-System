@@ -18,19 +18,35 @@ const OrderSchema = mongoose.Schema({
         required: true
     },
     total: {
-        type: Number,
+        type: mongoose.Types.Decimal128,
         default: 0,
         required: true
     },
+    itemTotal: {
+        type: mongoose.Types.Decimal128,
+        default: 0,
+        required: true
+    },
+    isDelivery: {
+        type: Boolean,
+        default: false
+    },
+    address: {
+        type: String,
+        default: ""
+    },
     deliveryFees: {
         type: Number,
-        default: 5,
-        required: true
+        default: 0
     },
     isComplete: {
         type: Boolean,
         default: false,
         required: true
+    },
+    time: {
+        type: Date,
+        default: 0
     },
     couponCode: {
         type: String

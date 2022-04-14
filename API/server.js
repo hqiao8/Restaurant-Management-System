@@ -13,6 +13,7 @@ app.use("/api/user", require("./routes/user"));
 app.use("/api/cust", require("./routes/customer"));
 app.use("/api/manager", require("./routes/manager"));
 app.use("/api/menu", require("./routes/menu"));
+app.use("/api/staff", require("./routes/staff"));
 
 mongoose.connect(process.env.DB_CONNECTION,
                 () => console.log("connected to database"));

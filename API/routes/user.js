@@ -17,6 +17,8 @@ Router.post('/register', async (req, res) => {
 
     const user = new User({
         name: rb.name,
+        fName: rb.fName,
+        lName: rb.lName,
         email: rb.email,
         password: hashPassword,
         type: "C",

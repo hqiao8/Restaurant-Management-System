@@ -20,6 +20,10 @@ const ItemSchema = mongoose.Schema({
         type: String,
         required: true  
     },
+    price: {
+        type: mongoose.Types.Decimal128,
+        required: true
+    },
     type: {
         type: String,
         required: true

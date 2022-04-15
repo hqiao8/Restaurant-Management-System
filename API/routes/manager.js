@@ -47,7 +47,7 @@ Router.post("/changeType", async (req, res) => {
     const n = req.body.type;
     // Assigns the new type only if it is C, M, or S.
     user.type = (n === "C") ? "C" : (n === "S") ? "S" : (n === "M") ? "M" : user.type;
-    await user.save();
+    res.json(await user.save());
     } catch (err) {
         res.json({message: err});
     }
@@ -57,6 +57,7 @@ Router.post("/addItem", async (req, res) => {
     const item = new Item({
         title: req.body.title,
         description: req.body.description,
+        price: req.body.price,
         type: req.body.type
     });
     res.json(await item.save());
@@ -86,16 +87,23 @@ Router.post("/toStaff", async (req, res) => {
 Router.put("/setHours", async (req, res) => {
     const staff = await Staff.findById(req.body.staffId);
     staff.hours = req.body.hours;
-    await staff.save();
+    res.json(await staff.save());
 });
 
 Router.get("/staffRatings", async (req, res) => {
     const staff = await Staff.find();
     const staffRatings = [];
     for (let i = 0; i < staff.length; i++) {
+        let ratings = staff[i].ratings.map(e => e.rating);
+        let sum = 0;
+        for (let i = 0; i < ratings.length; i++) {
+            sum += ratings[i];
+        }
+        let average = sum / ratings.length;
+        
         staffRatings[i] = {
-            staffId: staff.userId,
-            rating: (staff.reduce((a, b) => a + b) / staff.length)
+            staffId: staff[i]._id,
+            rating: average
         }
     }
     res.json(staffRatings); 
@@ -103,10 +111,18 @@ Router.get("/staffRatings", async (req, res) => {
 
 Router.get("/staffRatings/:staffId", async (req, res) => {
     const staff = await Staff.findById(req.params.staffId);
+    //res.json(staff)
+
+    let ratings = staff.ratings.map(e => e.rating);
+    let sum = 0;
+    for (let i = 0; i < ratings.length; i++) {
+        sum += ratings[i];
+    }
+    let average = sum / ratings.length;
 
     res.json({
-        staffId: staff.userId,
-        rating: (staff.reduce((a, b) => a + b) / staff.length)
+        staffId: staff._id,
+        rating: average
     }); 
 });
 

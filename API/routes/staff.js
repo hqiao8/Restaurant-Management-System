@@ -19,8 +19,8 @@ Router.use( async (req, res, next) => {
     }
 });
 
-Router.get("/", (req, res) => {
-    res.json(req.user);
+Router.get("/", async (req, res) => {
+    res.json(await Staff.findOne({userId: req.user._id}));
 });
 
 Router.get("/getOrders", async (req, res) => {
@@ -39,6 +39,7 @@ Router.delete("/completeOrder", async (req, res) => {
     staff.orders = staff.orders.filter((v, i, a) => v.orderId !== req.body.orderId);
     await cust.save();
     await staff.save();
+    res.json();
 });
 
 Router.get("/getHours", async (req, res) => {

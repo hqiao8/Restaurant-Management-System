@@ -9,8 +9,8 @@ Router.post('/register', async (req, res) => {
 
     const rb = req.body;
     
-    const emailExists = await User.findOne({email: rb.email});
-    if(emailExists) return res.status(400).send("Email already exists");
+    const emailExists = await User.findOne({name: rb.name});
+    if(emailExists) return res.status(400).send("Username already exists");
 
     const salt = await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash(rb.password, salt)
@@ -25,7 +25,8 @@ Router.post('/register', async (req, res) => {
     });
 
     try {
-        res.send(await user.save());
+        await user.save()
+        res.send(user._id);
     } catch (err) {
         res.json({message: err});
     }
@@ -62,15 +63,17 @@ const getUser = async (req, res, next) => {
     }
 };
 
-Router.put("/changeSettings", getUser, async (req, res) => {
-    req.user.name = req.body.name;
+Router.put("/changePassword", getUser, async (req, res) => {
+
+    if(req.body.password === null || (req.body.password !== req.body.confirm)) 
+        return res.status(400).send("Password does not match.");
 
     const salt = await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash(req.body.password, salt)
 
     req.user.password = hashPassword;
     await req.user.save();
-    res.json(req.user);
+    res.json(req.user._id);
     
 });
 

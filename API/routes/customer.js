@@ -32,12 +32,15 @@ Router.get("/retrieveFavourites", async (req, res) => {
 
 Router.get("/getUserRating/:itemId", async (req, res) => {
     const rating = req.user.favourites.find(e => e.itemId === req.params.itemId);
-    
+    if(!rating) res.json({
+        itemId: req.params.itemId,
+        rating: 0
+    });
     res.json(rating);
 });
 
 Router.post("/rateItem", async (req, res) => {
-    const rating = req.body.rating;
+    let rating = req.body.rating;
     // Constrains rating between 0 and 5
     rating = (rating < 0) ? 0 : (rating > 5) ? 5 : rating;
     const custRating = {
@@ -49,18 +52,38 @@ Router.post("/rateItem", async (req, res) => {
         rating: rating
     };
     const item = await Item.findById(req.body.itemId);
-    item.ratings.push(itemRating);
-    const cust = await User.findById(req.body.itemId);
-    cust.favourites.push(custRating);
 
-    await cust.save();
+    let iRatingexists = false;
+    for (let i = 0; i < item.ratings.length && !iRatingexists; i++) {
+        if (item.ratings[i].userId == req.user._id) {
+            iRatingexists = true; 
+            item.ratings[i].rating = rating;
+        }
+    }
+    //console.log("iRatingexists: " + iRatingexists);
+    if(!iRatingexists)
+        item.ratings.push(itemRating);
+    
+    let cRatingexists = false;
+    for (let i = 0; i < req.user.favourites.length && !cRatingexists; i++) {
+        if (req.user.favourites[i].itemId == req.body.itemId) {
+            cRatingexists = true; 
+            req.user.favourites[i].rating = rating;
+        }
+    }
+    //console.log("cRatingexists: " + cRatingexists);
+    if(!cRatingexists)
+        req.user.favourites.push(custRating);
+    await req.user.save();
     await item.save();
+
+    res.json(custRating);
 
 });
 
 Router.post("/rateStaff", async (req, res) => {
-    const staff = await Staff.findOne({orders: {$elemMatch: {orderId: req.body.orderId}}});
-    const r = req.body.rating;
+    const staff = await Staff.findById(req.body.staffId);
+    let r = req.body.rating;
     // Constrains rating between 0 and 5
     r = (r < 0) ? 0 : (r > 5) ? 5 : r;
 
@@ -68,12 +91,19 @@ Router.post("/rateStaff", async (req, res) => {
         userId: req.user._id,
         rating: r
     }
-    staff.ratings.push(rating);
+
+    let ratingexists = false;
+    for (let i = 0; i < staff.ratings.length && !ratingexists; i++) {
+        if (staff.ratings[i].userId == req.user._id) {
+            ratingexists = true; 
+            staff.ratings[i].rating = r;
+        }
+    }
+    if(!ratingexists)
+        staff.ratings.push(rating);
     await staff.save();
+    res.json(await staff.ratings);
 });
-
-
-
 
 
 module.exports = Router;

@@ -78,3 +78,39 @@
   justify-content: center;
   align-items: center;
 }
+
+.display {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.displayButtons {
+  width: 100%;
+  height: 40%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.displayButton {
+  border: 2px solid black;
+  background-color: white;
+  width: 33%;
+  height: 100%;
+  margin: 10px;
+}
+
+.displayButton span {
+  color: white;
+}
+
+.displayButton:hover {
+  cursor: pointer;
+}
+
+.displayButton:hover span {
+  color: black;
+}

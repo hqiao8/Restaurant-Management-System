@@ -42,7 +42,7 @@ export default function PasswordPage() {
 
     return (
         <div className="login-page">
-            <h2>Join us</h2>
+            <h2>Change Password</h2>
             <form onSubmit={handleSubmit}>
                 <p>
                     <label>Password</label><br/>

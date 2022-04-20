@@ -22,22 +22,21 @@ export default function SignInPage() {
                 type: type
             }
         ).then(res => {
-            if(res.status != 400) {
+            if(res.status !== 400) {
                 localStorage.setItem('token', res.data);
                 switch(type) {
-                    case "C": 
-                        navigate('/cust');
-                        break;
                     case "S": 
                         navigate('/recp');
                         break;
                     case "M": 
                         navigate('/mgr');
                         break;
+                    default: 
+                        navigate('/cust');
+                        break;
                 }
             }
-        })
-        .catch(err => {});
+        }).catch(err => {});
     };
 
     const handleFName = (e) => {

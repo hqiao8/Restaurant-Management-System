@@ -8,7 +8,7 @@
   flex-direction: row;
   justify-content: space-evenly;
   align-items: center;
-  position: fixed;
+  position: relative;
   background-color:springgreen;
   top: 0;
   left: 0;
@@ -95,22 +95,77 @@
   align-items: center;
 }
 
-.displayButton {
-  border: 2px solid black;
+.falseDisplayButton, .trueDisplayButton {
   background-color: white;
   width: 33%;
   height: 100%;
   margin: 10px;
 }
 
-.displayButton span {
+.falseDisplayButton {
+  border: 2px solid black;
+  color: black
+}
+
+.falseDisplayButton span {
   color: white;
 }
 
-.displayButton:hover {
+.falseDisplayButton:hover {
   cursor: pointer;
 }
 
-.displayButton:hover span {
+.falseDisplayButton:hover span {
   color: black;
+}
+.trueDisplayButton {
+  border: none;
+  color: white;
+}
+
+.title {
+  font-size: 2rem;
+  text-align: center;
+}
+
+table, th {
+  border: 1px solid blue;
+  text-align: center;
+}
+
+table {
+  width: 100%;
+  height: 40%;
+}
+
+.trueRow td {
+  border: 1px solid blue;
+  text-align: center;
+  color: black;
+}
+
+.falseRow td {
+  border: none;
+  color: white;
+}
+
+.falseRow td button {
+  border: none;
+  color: white;
+  background-color: white;
+}
+
+.falseRow td input {
+  border: none;
+  color: white;
+  background-color: white;
+}
+
+.qtnBtn {
+  border: none;
+  background-color: white;
+}
+
+.qtnBtn:hover {
+  cursor: pointer;
 }

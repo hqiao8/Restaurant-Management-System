@@ -24,11 +24,10 @@ export default function SignUpPage() {
                 password: password
             }
         ).then(res => {
-            if(res.status != 400) {
+            if(res.status !== 400) {
                 navigate('/signin');
             }
-        })
-        .catch(err => {});
+        }).catch(err => {});
     };
 
     const handleFName = (e) => {

@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import axios from 'axios'
 
 import '../../App.css'
@@ -7,122 +7,133 @@ import '../../App.css'
 export default function CustomerPage() {
 
     const [fName, setFName] = useState("");
-    const [favor, setFavor] = useState([]);
     const [type, setType] = useState("appetizer");
-    const [items, setItems] = useState([]);
     const [item1, setItem1] = useState([]);
     const [item2, setItem2] = useState([]);
     const [item3, setItem3] = useState([]);
+    const [price1, setPrice1] = useState([""]);
+    const [price2, setPrice2] = useState([""]);
+    const [price3, setPrice3] = useState([""]);
     const [page, setPage] = useState(1);
-    const [itemBtn1, setItemBtn1] = useState(false);
     const [itemBtn2, setItemBtn2] = useState(false);
     const [itemBtn3, setItemBtn3] = useState(false);
     const [prev, setPrev] = useState(true);
     const [next, setNext] = useState(false);
 
-    const navigate = useNavigate();
-
     const handleCustomer = () => {
         axios.get('http://localhost:3000/api/cust', 
             {headers: {'auth-token': localStorage.getItem('token')}}
         ).then(res => {
-            if(res.status != 400 && res.status != 401) {
+            if(res.status !== 400 && res.status !== 401) {
                 setFName(res.data.fName);
             }
-        })
-        .catch(err => {});
+        }).catch(err => {});
     };
 
     const handleMenu = () => {
-        const url = 'http://localhost:3000/api/menu/retrieveMenu/' + type;
-        axios.get(url)
-            .then(res => {
-            if(res.status == 400) {
-                setItemBtn1(true);
-                setItemBtn2(true);
-                setItemBtn3(true);
-                setPrev(true);
-                setNext(true);
-            }
-            else {
-                setItems(res.data.filter(item => item.type === type));
-                const pages = Math.ceil(items.length/3);
-                if(pages == 1) {
-                    setItem1(items[0]);
-                    setItemBtn1(false);
-                    if(items.length == 3) {
-                        setItem2(items[1]);
-                        setItem3(items[2]);
+        axios.get('http://localhost:3000/api/menu/retrieveMenu/' + type
+        ).then(res => {
+            if(res.status !== 400)  {
+                const endPage = Math.ceil(res.data.length / 3);
+                const remainder = res.data.length % 3;
+                handleItem(1, res.data[3*page-3]);
+                switch(page) {
+                    case endPage: 
+                        switch(remainder) {
+                            case 2:
+                                handleItem(2, res.data[3*page-2]);
+                                setItemBtn2(false);
+                                setItemBtn3(true);
+                                break;
+                            case 0:
+                                handleItem(2, res.data[3*page-2]);
+                                handleItem(3, res.data[3*page-1]);
+                                setItemBtn2(false);
+                                setItemBtn3(false);
+                                break;
+                            default:
+                                setItemBtn2(true);
+                                setItemBtn3(true);
+                                break;
+                        }
+                        break;
+                    default:
+                        handleItem(2, res.data[3*page-2]);
+                        handleItem(3, res.data[3*page-1]);
                         setItemBtn2(false);
                         setItemBtn3(false);
-                    }
-                    else {
-                        setItem2(items[1]);
-                        setItemBtn2(false);
-                        setItemBtn3(true);
-                    }
-                    setPrev(true);
-                    setNext(true);
+                        break;
                 }
-                else if(page = 1) {
-                    setItem1(items[0]);
-                    setItem2(items[1]);
-                    setItem3(items[2]);
-                    setItemBtn1(false);
-                    setItemBtn2(false);
-                    setItemBtn3(false);
-                    setPrev(true);
-                    setNext(false);
-                }
-                else if(page = pages) {
-                    setItem1(items[3*page-3]);
-                    setItemBtn1(false);
-                    if(items.length == 3*page) {
-                        setItem2(items[3*page-2]);
-                        setItem3(items[3*page-1]);
-                        setItemBtn2(false);
-                        setItemBtn3(false);
-                    }
-                    else {
-                        setItem2(items[3*page-2]);
-                        setItemBtn2(false);
-                        setItemBtn3(true);
-                    }
-                    setPrev(false);
-                    setNext(true);
-                }
-                else {
-                    setItem1(items[3*page-3]);
-                    setItem2(items[3*page-2]);
-                    setItem3(items[3*page-1]);
-                    setItemBtn1(false);
-                    setItemBtn2(false);
-                    setItemBtn3(false);
-                    setPrev(false);
-                    setNext(false);
-                }
+                setPrev(false);
+                setNext(false);
+                if(page === 1) setPrev(true);
+                if(page === endPage) setNext(true);
             }
-        })
-        .catch(err => {});
+        }).catch(err => {});
+    };
+
+    const handleCategory = (category) => {
+        setType(category);
+        setPage(1);
+    };
+
+    const handleItem = (i, data) => {
+        switch(i) {
+            case 1:
+                setItem1(data);
+                setPrice1(data.price.$numberDecimal);
+                break;
+            case 2:
+                setItem2(data);
+                setPrice2(data.price.$numberDecimal);
+                break;
+            case 3:
+                setItem3(data);
+                setPrice3(data.price.$numberDecimal);
+                break;
+            default:
+                break;
+        }
+    }
+
+    const handleCart = (i) => {
+        let itemId;
+        switch(i) {
+            case 1:
+                itemId = item1._id;
+                break;
+            case 2:
+                itemId = item2._id;
+                break;
+            case 3:
+                itemId = item3._id;
+                break;
+            default:
+                break;
+        }
+        axios.post('http://localhost:3000/api/order/addItem', 
+            {
+                itemId: itemId,
+                quantity: 1
+            },
+            {headers: {'auth-token': localStorage.getItem('token')}}
+        ).then(res => {}
+        ).catch(err => {});
     };
 
     const handleSignout = () => {
         localStorage.removeItem('token');
     };
 
-    const handleUpdate = () => {
-        handleCustomer();
-        handleMenu();
-    };
-    useEffect(() => handleUpdate(), []);
+    useEffect(() => handleCustomer(), []);
+    useEffect(() => handleMenu(), [type, page]);
 
     return (
         <div className="main-page">
             <nav className="navbar">
-                <Link to="">My cart</Link>
-                <Link to="">Orders</Link>
-                <Link to="">Coupons</Link>
-                <Link to="">Dependents</Link>
+                <Link to="/cust">Main</Link>
+                <Link to="/cust/cart">My cart</Link>
+                <Link to="/cust/order">Orders</Link>
                 <Link to="/psd">Password</Link>
                 <Link to="/" onClick={handleSignout}>Sign Out</Link>
             </nav>
@@ -132,42 +143,45 @@ export default function CustomerPage() {
                 </h1>
             </section>
             <div className="tab">
-                <button onClick={()=>{setType("appetizer");handleUpdate();}}>
+                <button onClick={()=>handleCategory("appetizer")}>
                     Appetizer
                 </button>
-                <button onClick={()=>{setType("breakfast");handleUpdate();}}>
+                <button onClick={()=>handleCategory("breakfast")}>
                     Breakfast
                 </button>
-                <button onClick={()=>{setType("lunch_dinner");handleUpdate();}}>
+                <button onClick={()=>handleCategory("lunch_dinner")}>
                     Lunch/Dinner
                 </button>
-                <button onClick={()=>{setType("dessert");handleUpdate();}}>
+                <button onClick={()=>handleCategory("dessert")}>
                     Dessert
                 </button>
-                <button onClick={()=>{setType("beverage");handleUpdate();}}>
+                <button onClick={()=>handleCategory("beverage")}>
                     Beverage
                 </button>
             </div>
             <div className="displayButtons">
-                <button className="displayButton" type="button" disabled={itemBtn1}>
+                <button className="falseDisplayButton" onClick={() => handleCart(1)}>
                     <p>{item1.title}</p>
-                    
+                    <p>{item1.description}</p>
+                    <p>${price1}</p>
                     <span>Add to cart</span>
                 </button>
-                <button className="displayButton" type="button" disabled={itemBtn2}>
+                <button className={itemBtn2.toString() + "DisplayButton"} disabled={itemBtn2} onClick={() => handleCart(2)}>
                     <p>{item2.title}</p>
-                    
+                    <p>{item2.description}</p>
+                    <p>${price2}</p>
                     <span>Add to cart</span>
                 </button>
-                <button className="displayButton" type="button" disabled={itemBtn3}>
+                <button className={itemBtn3.toString() + "DisplayButton"} disabled={itemBtn3} onClick={() => handleCart(3)}>
                     <p>{item3.title}</p>
-                    
+                    <p>{item3.description}</p>
+                    <p>${price3}</p>
                     <span>Add to cart</span>
                 </button>
             </div>
             <div className="display">
-                <button type="button" disabled={prev} onClick={()=>setPage(page-1)}>Previous</button>
-                <button type="button" disabled={next} onClick={()=>setPage(page+1)}>Next</button>
+                <button disabled={prev} onClick={() => setPage(page-1)}>Previous</button>
+                <button disabled={next} onClick={() => setPage(page+1)}>Next</button>
             </div>
         </div>
     )

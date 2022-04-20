@@ -20,16 +20,15 @@ export default function PasswordPage() {
             },
             {headers: {'auth-token': localStorage.getItem('token')}}
         ).then(res => {
-            if(res.status != 400) {
-                navigate('/cust');
+            if(res.status !== 400) {
+                navigate(-1);
             }
-        })
-        .catch(err => {});
+        }).catch(err => {});
     };
 
     const handleCancel = (e) => {
         e.preventDefault();
-        navigate('/cust');
+        navigate(-1);
     };
 
     const handlePsd = (e) => {
